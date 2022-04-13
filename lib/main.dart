@@ -1,72 +1,120 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    const appTitle = 'Stock Bird';
+
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      title: appTitle,
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.greenAccent,
+          title: const Text(appTitle) ,
+        ),
+        body: MyHomePage(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
-
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
-
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  String email = "";
+  String password = "";
 
-  void _incrementCounter() {
-    setState(() {
-
-      _counter++;
-    });
+  void _submit() {
+    // you can write your
+    // own code according to
+    // whatever you want to submit;
   }
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
-      appBar: AppBar(
 
-        title: Text(widget.title),
-      ),
-      body: Center(
-
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+            Form(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'E-Mail'),
+                    keyboardType: TextInputType.emailAddress,
+                    onFieldSubmitted: (value) {
+                      setState(() {
+                        email = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Sending Message"),
+
+                            ));
+                      };
+                    }),
+                  // this is where the
+                  // input goes
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'password'),
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: true,
+                    validator: (value) {
+                      if (value!.isEmpty && value.length<5){
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Make a valid password"),
+                        ));
+
+                      }
+
+                    },
+                    onFieldSubmitted: (value) {
+                      setState(() {
+                        password = value;
+                      });
+                    },
+                  ),
+                  RaisedButton(
+                    onPressed: _submit,
+                    child: Text("submit"),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+            // this is where
+            // the form field
+            // are defined
+            SizedBox(
+              height: 20,
             ),
+            Column(
+              children: <Widget>[
+                email.isEmpty ? Text("No data") : Text(email),
+                SizedBox(
+                  height: 10,
+                ),
+                password.isEmpty ? Text("No Data") : Text(password),
+              ],
+            )
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
